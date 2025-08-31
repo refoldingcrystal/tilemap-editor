@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import pygame
 
 
@@ -32,9 +33,16 @@ class Tilemap:
             try:
                 with open(filename, 'r') as f:
                     self.tilemap = json.load(f)
-            except json.JSONDecodeError:
-                print(f"'{filename}' is not a valid json file")
+            except Exception:
                 return False
+            for tile_pos in self.tilemap.copy():
+                if re.fullmatch(r"^[+-]?\d+;[+-]?\d+$", tile_pos) is None:
+                    del self.tilemap[tile_pos]
+                elif not isinstance(self.tilemap[tile_pos], int):
+                    del self.tilemap[tile_pos]
+                elif self.tilemap[tile_pos] not in range(1, len(self.colors) + 1):
+                    del self.tilemap[tile_pos]
+
         return True
 
     def clear(self):

@@ -13,7 +13,9 @@ class Window:
         self.screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
 
         self.tilemap = Tilemap(self.screen)
-        self.tilemap.load(self.filename)
+        if not self.tilemap.load(self.filename):
+            print(f"Could not load '{filename}'")
+
 
     def run(self):
         while True:
