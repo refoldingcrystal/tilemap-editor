@@ -3,11 +3,6 @@ import sys
 import pygame
 
 from tilemap import Tilemap
-
-
-def close():
-    pygame.quit()
-    sys.exit()
         
 
 class Window:
@@ -18,12 +13,14 @@ class Window:
         self.screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
 
         self.tilemap = Tilemap(self.screen)
+        self.tilemap.load(self.filename)
 
     def run(self):
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    close()
+                    pygame.quit()
+                    sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_e:
                         self.tilemap.export(self.filename)
@@ -45,8 +42,6 @@ class Window:
             self.tilemap.render(m_pos)
             pygame.display.update()
 
-suppress_warning = True
-
 if len(sys.argv) < 2:
     print("Using 'map.json' as output file")
     filename = 'map.json'
@@ -55,11 +50,6 @@ else:
 if os.path.isdir(filename):
     print(f"'{filename} is a directory")
     sys.exit()
-if os.path.isfile(filename):
-    if not suppress_warning:
-        print(f"'{filename}' is a file, continue anyway? [Y/n]")
-        if input() not in ['', 'y', 'Y']:
-            sys.exit()
 
 Window(filename).run()
 

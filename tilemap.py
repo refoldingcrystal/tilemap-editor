@@ -1,4 +1,5 @@
 import json
+import os
 import pygame
 
 
@@ -25,6 +26,16 @@ class Tilemap:
             (255, 0, 255),
             (255, 255, 0)
         ]
+
+    def load(self, filename):
+        if os.path.isfile(filename):
+            try:
+                with open(filename, 'r') as f:
+                    self.tilemap = json.load(f)
+            except json.JSONDecodeError:
+                print(f"'{filename}' is not a valid json file")
+                return False
+        return True
 
     def clear(self):
         self.tilemap = {}
