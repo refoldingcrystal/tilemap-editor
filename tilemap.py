@@ -14,24 +14,14 @@ def str2pos(pos):
 
 class Tilemap:
     def __init__(self, surf, colors):
-        self.xxx = colors
+        self.colors = colors
         self.draw_grid = True
         self.surf = surf
         self.tilemap = {}
         self.tile_size = 50
-        self.tile_type = 1
-        self.colors = [
-            (255, 0, 0),
-            (0, 255, 0),
-            (0, 0, 255),
-            (0, 255, 255),
-            (255, 0, 255),
-            (255, 255, 0)
-        ]
 
     def change_zoom(self, movement):
         self.tile_size = max(5, min(200, self.tile_size + movement * 5))
-        print(self.tile_size)
 
     def load(self, filename):
         if os.path.isfile(filename):
@@ -45,35 +35,31 @@ class Tilemap:
                     del self.tilemap[tile_pos]
                 elif not isinstance(self.tilemap[tile_pos], int):
                     del self.tilemap[tile_pos]
-                elif self.tilemap[tile_pos] not in range(1, len(self.colors) + 1):
+                elif self.tilemap[tile_pos] not in range(1, len(self.colors.colors) + 1):
                     del self.tilemap[tile_pos]
 
         return True
 
     def clear(self):
         self.tilemap = {}
-
-    def change_tile_type(self, movement):
-        self.tile_type = (self.tile_type + movement - 1) % len(self.colors) + 1
     
     def mouse2pos(self, m_pos, offset=[0,0]):
         return ((m_pos[0] + offset[0]) // self.tile_size, (m_pos[1] + offset[1]) // self.tile_size)
 
     def add(self, m_pos, offset):
-        self.tilemap[pos2str(self.mouse2pos(m_pos, offset))] = self.xxx.tile_type
+        self.tilemap[pos2str(self.mouse2pos(m_pos, offset))] = self.colors.tile_type
 
     def remove(self, m_pos, offset):
         pos = pos2str(self.mouse2pos(m_pos, offset))
         if pos in self.tilemap:
             del self.tilemap[pos]
 
-    def render(self, m_pos, offset, canvas):
+    def render(self, m_pos, offset, draw):
         for tile_pos in self.tilemap:
             pos = str2pos(tile_pos)
             rect = (pos[0] * self.tile_size - offset[0], pos[1] * self.tile_size - offset[1],
                     self.tile_size, self.tile_size)
-            # color = self.colors[self.tilemap[tile_pos] - 1]
-            color = self.xxx.color(self.tilemap[tile_pos])
+            color = self.colors.color(self.tilemap[tile_pos])
             pygame.draw.rect(self.surf, color, rect)
 
         if self.tile_size > 20:
@@ -97,12 +83,12 @@ class Tilemap:
             pygame.draw.line(self.surf, (200, 200, 200), (0, -offset[1]),
                             (self.surf.get_width(), -offset[1]), width=1)                
         
-        if canvas:
+        if draw:
             pos = self.mouse2pos(m_pos, offset)
-            rect = (pos[0] * self.tile_size - offset[0], pos[1] * self.tile_size - offset[1],
-                    self.tile_size, self.tile_size)
+            rect = (pos[0] * self.tile_size - offset[0] + 1, pos[1] * self.tile_size - offset[1] + 1,
+                    self.tile_size - 2, self.tile_size - 2)
             # color = self.colors[self.tile_type - 1]
-            color = self.xxx.color()
+            color = self.colors.color()
             pygame.draw.rect(self.surf, color, rect, width=5)
 
     def export(self, filename):

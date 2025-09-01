@@ -25,12 +25,12 @@ class Colors:
         if 0 < tile_type <= len(self.colors):
             self.tile_type = tile_type
 
-    def render(self, m_pos, pressed, canvas):
+    def render(self, m_pos, pressed, draw):
         rect = pygame.Rect(0, 0, 60, self.surf.get_height())
         pygame.draw.rect(self.surf, (30, 30, 30), rect)
         for i, rect in enumerate(self.rects):
             pygame.draw.rect(self.surf, self.colors[i], rect, border_radius=10)
-        if not canvas:
+        if draw:
             for i, rect in enumerate(self.rects):
                 if rect.collidepoint(m_pos):
                     pygame.draw.rect(self.surf, (30, 30, 30), rect, border_radius=10, width=2)

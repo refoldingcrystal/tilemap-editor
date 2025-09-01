@@ -55,8 +55,6 @@ class Window:
                         self.tilemap.clear()
                     if event.key == pygame.K_g:
                         self.tilemap.draw_grid ^= True
-                    if event.key == pygame.K_LCTRL:
-                        self.ctrl = True
                     match event.key:
                         case pygame.K_1:
                             self.colors.change_tile_type(1)
@@ -70,9 +68,6 @@ class Window:
                             self.colors.change_tile_type(5)
                         case pygame.K_6:
                             self.colors.change_tile_type(6)
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LCTRL:
-                        self.ctrl = False
                 if event.type == pygame.MOUSEWHEEL:
                     self.tilemap.change_zoom(event.y)
 
@@ -81,17 +76,26 @@ class Window:
             if m_pos[0] > 60:
                 if pressed[0]:
                     self.tilemap.add(m_pos, self.camera)
-                if pressed[1]:
-                    self.move_camera()
                 elif pressed[2]:
                     self.tilemap.remove(m_pos, self.camera)
-                
+                if pressed[1]:
+                    if not self.moving:
+                        self.moving = True
+                        self.moving_start = pygame.mouse.get_pos()
+                        self.camera_start = self.camera.copy()
+                    else:
+                        m_pos = pygame.mouse.get_pos()
+                        dx = self.moving_start[0] - m_pos[0]
+                        dy = self.moving_start[1] - m_pos[1]
+                        self.camera[0] = self.camera_start[0] + dx
+                        self.camera[1] = self.camera_start[1] + dy
             if not pressed[1]:
                 self.moving = False
             
+            
             self.screen.fill((20, 20, 20))
-            self.tilemap.render(m_pos, self.camera, canvas=(m_pos[0] > 60))
-            self.colors.render(m_pos, pressed[0], canvas=(m_pos[0] > 60))
+            self.tilemap.render(m_pos, self.camera, draw=(m_pos[0] > 60))
+            self.colors.render(m_pos, pressed[0], draw=(m_pos[0] <= 60))
             pygame.display.update()
 
 if len(sys.argv) < 2:
