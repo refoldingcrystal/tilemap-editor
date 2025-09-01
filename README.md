@@ -10,13 +10,15 @@ Simple tool to create tilemaps
 
 `e` - export (defaults to `map.json`)
 
-`lmb` - draw
+`keys 1 - 6` - change color
 
-`rmb` - erase
+`left mouse button` - draw
 
-`mmb` - move around
+`right mouse button` - erase
 
-`scroll` - change tile type
+`middle mouse button` - move around
+
+`scroll` - zoom in/out
 
 ## Output format
 

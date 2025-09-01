@@ -13,7 +13,8 @@ def str2pos(pos):
 
 
 class Tilemap:
-    def __init__(self, surf):
+    def __init__(self, surf, colors):
+        self.xxx = colors
         self.draw_grid = True
         self.surf = surf
         self.tilemap = {}
@@ -29,7 +30,8 @@ class Tilemap:
         ]
 
     def change_zoom(self, movement):
-        self.tile_size = max(10, min(200, self.tile_size + movement * 5))
+        self.tile_size = max(5, min(200, self.tile_size + movement * 5))
+        print(self.tile_size)
 
     def load(self, filename):
         if os.path.isfile(filename):
@@ -58,43 +60,50 @@ class Tilemap:
         return ((m_pos[0] + offset[0]) // self.tile_size, (m_pos[1] + offset[1]) // self.tile_size)
 
     def add(self, m_pos, offset):
-        self.tilemap[pos2str(self.mouse2pos(m_pos, offset))] = self.tile_type
+        self.tilemap[pos2str(self.mouse2pos(m_pos, offset))] = self.xxx.tile_type
 
     def remove(self, m_pos, offset):
         pos = pos2str(self.mouse2pos(m_pos, offset))
         if pos in self.tilemap:
             del self.tilemap[pos]
 
-    def render(self, m_pos, offset):
+    def render(self, m_pos, offset, canvas):
         for tile_pos in self.tilemap:
             pos = str2pos(tile_pos)
             rect = (pos[0] * self.tile_size - offset[0], pos[1] * self.tile_size - offset[1],
                     self.tile_size, self.tile_size)
-            color = self.colors[self.tilemap[tile_pos] - 1]
+            # color = self.colors[self.tilemap[tile_pos] - 1]
+            color = self.xxx.color(self.tilemap[tile_pos])
             pygame.draw.rect(self.surf, color, rect)
 
-        if self.draw_grid:
-            for x in range(self.surf.get_width() // self.tile_size + 2):
-                pygame.draw.line(self.surf, (200, 200, 200),
-                                (x * self.tile_size - offset[0] % self.tile_size, 0),
-                                (x * self.tile_size - offset[0] % self.tile_size, self.surf.get_height()))
-            for y in range(self.surf.get_height() // self.tile_size + 2):
-                pygame.draw.line(self.surf, (200, 200, 200),
-                                (0, y * self.tile_size - offset[1] % self.tile_size),
-                                (self.surf.get_width(), y * self.tile_size - offset[1] % self.tile_size))
-            # does not work
+        if self.tile_size > 20:
+            if self.draw_grid:
+                for x in range(self.surf.get_width() // self.tile_size + 2):
+                    pygame.draw.line(self.surf, (200, 200, 200),
+                                    (x * self.tile_size - offset[0] % self.tile_size, 0),
+                                    (x * self.tile_size - offset[0] % self.tile_size, self.surf.get_height()))
+                for y in range(self.surf.get_height() // self.tile_size + 2):
+                    pygame.draw.line(self.surf, (200, 200, 200),
+                                    (0, y * self.tile_size - offset[1] % self.tile_size),
+                                    (self.surf.get_width(), y * self.tile_size - offset[1] % self.tile_size))
             pygame.draw.line(self.surf, (200, 200, 200), (-offset[0], 0),
-                             (-offset[0], self.surf.get_height()), width=3)
+                            (-offset[0], self.surf.get_height()), width=3)
             pygame.draw.line(self.surf, (200, 200, 200), (0, -offset[1]),
-                             (self.surf.get_width(), -offset[1]), width=3)
-            
+                            (self.surf.get_width(), -offset[1]), width=3)
             pygame.draw.circle(self.surf, (200, 200, 200), (-offset[0], -offset[1]), radius=5)
+        else:
+            pygame.draw.line(self.surf, (200, 200, 200), (-offset[0], 0),
+                            (-offset[0], self.surf.get_height()), width=1)
+            pygame.draw.line(self.surf, (200, 200, 200), (0, -offset[1]),
+                            (self.surf.get_width(), -offset[1]), width=1)                
         
-        pos = self.mouse2pos(m_pos, offset)
-        rect = (pos[0] * self.tile_size - offset[0], pos[1] * self.tile_size - offset[1],
-                self.tile_size, self.tile_size)
-        color = self.colors[self.tile_type - 1]
-        pygame.draw.rect(self.surf, color, rect, width=5)
+        if canvas:
+            pos = self.mouse2pos(m_pos, offset)
+            rect = (pos[0] * self.tile_size - offset[0], pos[1] * self.tile_size - offset[1],
+                    self.tile_size, self.tile_size)
+            # color = self.colors[self.tile_type - 1]
+            color = self.xxx.color()
+            pygame.draw.rect(self.surf, color, rect, width=5)
 
     def export(self, filename):
         with open(filename, 'w') as file:
