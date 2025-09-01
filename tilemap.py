@@ -28,6 +28,9 @@ class Tilemap:
             (255, 255, 0)
         ]
 
+    def change_zoom(self, movement):
+        self.tile_size = max(10, min(200, self.tile_size + movement * 5))
+
     def load(self, filename):
         if os.path.isfile(filename):
             try:
