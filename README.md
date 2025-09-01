@@ -2,6 +2,8 @@
 
 Simple tool to create tilemaps
 
+Currently does not support textures
+
 ## Keybinds
 
 `c` - clear canvas
@@ -22,15 +24,15 @@ Simple tool to create tilemaps
 
 ## Output format
 
-map is exported as json
+Map is exported as json
 
-each non-blank tile is represented by its position and tile type
+Each non-blank tile is represented by its position and tile type
 
 ```json
 "x;y": "type"
 ```
 
-example smiley face
+Example smiley face
 
 ```json
 {"1;0": 1, "1;1": 1, "3;0": 1, "3;1": 1, "0;3": 1, "1;4": 1, "2;4": 1, "3;4": 1, "4;3": 1}
@@ -38,10 +40,10 @@ example smiley face
 
 ## Usage
 
-run with python
+Run with python, map will be exported to `map.json`
 
 `python3 main.py`
 
-alternatively provide name for exporting
+Alternatively provide name for exporting
 
 `python3 main.py map.json`
