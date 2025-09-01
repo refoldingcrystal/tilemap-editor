@@ -16,6 +16,22 @@ class Window:
         if not self.tilemap.load(self.filename):
             print(f"Could not load '{filename}'")
 
+        self.camera = [-self.screen.get_width() // 2, -self.screen.get_height() // 2]
+        self.moving = False
+        self.moving_start = None
+
+    def move_camera(self):
+        if not self.moving:
+            self.moving = True
+            self.moving_start = pygame.mouse.get_pos()
+            self.camera_start = self.camera.copy()
+        else:
+            m_pos = pygame.mouse.get_pos()
+            dx = self.moving_start[0] - m_pos[0]
+            dy = self.moving_start[1] - m_pos[1]
+            self.camera[0] = self.camera_start[0] + dx
+            self.camera[1] = self.camera_start[1] + dy
+
 
     def run(self):
         while True:
@@ -36,12 +52,17 @@ class Window:
             pressed = pygame.mouse.get_pressed()
             m_pos = pygame.mouse.get_pos()
             if pressed[0]:
-                self.tilemap.add(m_pos)
+                self.tilemap.add(m_pos, self.camera)
             elif pressed[2]:
-                self.tilemap.remove(m_pos)
+                self.tilemap.remove(m_pos, self.camera)
+            
+            if pressed[1]:
+                self.move_camera()
+            else:
+                self.moving = False
             
             self.screen.fill((20, 20, 20))
-            self.tilemap.render(m_pos)
+            self.tilemap.render(m_pos, self.camera)
             pygame.display.update()
 
 if len(sys.argv) < 2:

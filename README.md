@@ -14,6 +14,8 @@ Simple tool to create tilemaps
 
 `rmb` - erase
 
+`mmb` - move around
+
 `scroll` - change tile type
 
 ## Output format
